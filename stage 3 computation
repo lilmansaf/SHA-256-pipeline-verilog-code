@@ -1,22 +1,25 @@
-module computation(in,out);
-input [511:0] in;
-output [255:0] out;
+module computation(in,A,B,C,D,E,F,G,H,H1,H2,H3,H4,H5,H6,H7,H8);
+
 wire [31:0] T1,T2;
-wire [31:0] H1,H2,H3,H4,H5,H6,H7,H8;
+output [31:0] H1,H2,H3,H4,H5,H6,H7,H8;
 wire [31:0] a,b,c,d,e,f,g,h;
 wire [31:0] w1, w2, w3, w4;
 wire [63:0] Wi;
-wire [31:0] A,B,C,D,E,F,G,H;
+output [31:0] A,B,C,D,E,F,G,H;
 wire [31:0] K0;
-assign K0 = 32'b01000010100010100010111110011000;
-assign H1 = in[31:0] + in[511:480];      
-assign H2 = in [63:32] + in[479:448];    
-assign H3 = in[95:64] ^ in[447:416];  
-assign H4 = in[127:96] + in[415:384];
-assign H5 = in[159:128] + in[383:352];    
-assign H6 = in[191:160] ^ in [351:320];    
-assign H7 = in[223:192] + in[319:288];    
-assign H8 = in[255:224] ~^ in[287:256];
+input [79:0] in;
+ Ki k1(K0);
+ 
+   
+     
+assign H1 = in[31:0];      
+assign H2 = in [63:32];    
+assign H3 = H2;  
+assign H4 = H2 + H1;
+assign H5 = H4 + H2;    
+assign H6 = H3;    
+assign H7 = H2 + H8 + H2;    
+assign H8 = H4 + H6 + H1;
 assign a=H1;
 assign b=H2;
 assign c=H3;
@@ -39,5 +42,5 @@ assign D = c;
 assign C = b;
 assign B = a;
 assign A = T1 + T2;
-assign out = {A,B,C,D,E,F,G,H};
+
 endmodule
