@@ -1,0 +1,511 @@
+module register_file(sl1,sl2,sl3,out1,out2,out3);
+input [1:0] sl1, sl2, sl3;
+output reg [7:0] out1, out2, out3;
+wire[7:0] A = 8'b 01101101;
+wire[7:0] B = 8'b 00000000;
+wire[7:0] C = 8'b 11001111;
+wire[7:0] D = 8'b 00011111;
+always@(*)
+    begin
+        case(sl1)
+            2'b 00 : out1<=D;
+            2'b 01 : out1<=C;
+            2'b 10 : out1<=B;
+            2'b 11 : out1<=A;
+        endcase
+        case(sl2)
+            2'b 00 : out2<=D;
+            2'b 01 : out2<=C;
+            2'b 10 : out2<=B;
+            2'b 11 : out2<=A;
+        endcase
+        case(sl3)
+            2'b 00 : out3<=D;
+            2'b 01 : out3<=C;
+            2'b 10 : out3<=B;
+            2'b 11 : out3<=A;
+        endcase
+    end
+endmodule
+
+
+module RotA2(out, in);//rotate in 2 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[1:0],in[31:2]};
+endmodule
+
+module RotA13(out, in);//rotate in 13 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[12:0],in[31:13]};
+endmodule
+
+module RotA22(out, in);//rotate in 22 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[21:0],in[31:22]};
+endmodule
+
+module RotA6(out, in);//rotate in 6 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[5:0],in[31:6]};
+endmodule
+
+module RotA11(out, in);//rotate in 11 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[10:0],in[31:11]};
+endmodule
+
+module RotA25(out, in);//rotate in 6 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[24:0],in[31:25]};
+endmodule
+
+module RotA7(out, in);//rotate in 7 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[6:0],in[31:7]};
+endmodule
+
+module RotA18(out, in);//rotate in 18 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[17:0],in[31:18]};
+endmodule
+
+module RotA17(out, in);//rotate in 3 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[16:0],in[31:17]};
+endmodule
+
+module RotA19(out, in);//rotate in 3 times to the right
+  input [31:0] in;
+  output [31:0] out;
+  assign out = {in[18:0],in[31:19]};
+endmodule
+
+module SHR3(out, in);// shift-right in 3 times
+  input [31:0] in;
+  output [31:0] out;
+assign out = in >> 3;
+endmodule
+
+module SHR10(out, in);// shift-right in 3 times
+  input [31:0] in;
+  output [31:0] out;
+  assign out = in >> 10;
+endmodule
+
+module CH_XYZ(out, X, Y, Z);
+  input [31:0] X;
+  input [31:0] Y;
+  input [31:0] Z;
+  output [31:0] out;
+  assign out = (X & Y) ^ (X & Z);
+endmodule
+
+module Maj_XYZ(out, X, Y, Z);
+  input [31:0] X;
+  input [31:0] Y;
+  input [31:0] Z;
+  output [31:0] out;
+  assign out = (X & Y) ^ (X & Z) ^ (Y & Z);
+endmodule
+
+module E_0X(out, in);
+  input [31:0] in;
+  output [31:0] out;
+  wire [31:0] w1,w2,w3;
+  RotA2 R2(w1,in);
+  RotA13 R13(w2,in);
+  RotA22 R22(w3,in);
+  assign out = w1 ^ w2 ^ w3;
+endmodule
+
+module E_1X(out, in);
+  input [31:0] in;
+  output [31:0] out;
+  wire [31:0] w1,w2,w3;
+RotA6 R6(w1,in);
+RotA11 R11(w2,in);
+RotA25 R25(w3,in);
+assign out = w1 ^ w2 ^ w3;
+endmodule
+
+module O_0X(out, in);
+  input [31:0] in;
+  output [31:0] out;
+  wire [31:0] w1,w2,w3;
+RotA7 R7(w1,in);
+RotA18 S18(w2,in);
+SHR3 S3(w3,in);
+assign out = w1 ^ w2 ^ w3;
+endmodule
+
+module O_1X(out, in);
+  input [31:0] in;
+  output [31:0] out;
+  wire [31:0] w1,w2,w3;
+  RotA17 R17(w1,in);
+  RotA19 R19(w2,in);
+  SHR10 S10(w3,in);
+  assign out = w1 ^ w2 ^ w3;
+endmodule
+
+module padding(in,out);
+  input [79:0]in; // 80 bits for 10 char. input
+  output reg [511:0]out;
+always@(*)
+    begin
+     out = {in, 432'b100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000};
+    end
+endmodule
+
+module Ki(K0);
+output [31:0] K0;
+assign K0 = 32'b01000010100010100010111110011000;
+
+endmodule
+
+module Compression(in,M,W);
+  input [511:0] in;
+  output [31:0] w1, w2, w3, w4, w5, w6;
+  output reg [63:0] M;
+  output reg [63:0] W;
+ 
+  always@(*)
+    begin
+      W[0] = {in[31:0]};
+      W[1] = {in[63:32]};
+      W[2] = {in[95:64]};
+      W[3] = {in[127:96]};
+      W[4] = {in[159:128]};
+      W[5] = {in[191:160]};
+      W[6] = {in[223:192]};
+      W[7] = {in[255:224]};
+      W[8] = {in[287:256]};
+      W[9] = {in[319:288]};
+      W[10] = {in[351:320]};
+      W[11] = {in[383:352]};
+      W[12] = {in[415:384]};
+      W[13] = {in[447:416]};
+      W[14] = {in[479:448]};
+      W[15] = {in[511:480]};
+     
+       M = {W[15],W[14],W[13],W[12],W[11],W[10],W[9],W[8],W[7],W[6],W[5],W[4],W[3],W[2],W[1],W[0]};
+     
+      W[16]=32'b1+W[9]+W[0];
+      W[16]=W[16] + 32'b00111010000111110100101100101110;
+     
+      W[17]=32'b00111010000111110100101100101110+W[10]+W[1];
+      W[17]=W[17] + 32'b00111010000111110100101100101110;
+     
+      W[18]=32'b00111010000111110100101100101110+W[11]+W[2];
+      W[18]=W[18] + 32'b00111010000111110100101100101110;
+     
+      W[19]=32'b00111010000111110100101100101110+W[12]+W[3];
+      W[19]=W[19] + 32'b00111010000111110100101100101110;
+     
+      W[20]=32'b00111010000111110100101100101110+W[13]+W[4];
+      W[20]=W[20] + 32'b00111010000111110100101100101110;
+     
+      W[21]=32'b00111010000111110100101100101110+W[14]+W[5];
+      W[21]=W[21] + 32'b00111010000111110100101100101110;
+     
+      W[22]=32'b00111010000111110100101100101110+W[15]+W[6];
+      W[22]=W[22] + 32'b00111010000111110100101100101110;
+     
+      W[23]=32'b00111010000111110100101100101110+W[16]+W[7];
+      W[23]=W[23] + 32'b00111010000111110100101100101110;
+     
+      W[24]=32'b00111010000111110100101100101110+W[17]+W[8];
+      W[24]=W[24] + 32'b00111010000111110100101100101110;
+     
+      W[25]=32'b00111010000111110100101100101110+W[18]+W[9];
+      W[25]=W[25] + 32'b00111010000111110100101100101110;
+     
+      W[26]=32'b00111010000111110100101100101110+W[19]+W[10];
+      W[26]=W[26] + 32'b00111010000111110100101100101110;
+     
+      W[27]=32'b00111010000111110100101100101110+W[20]+W[11];
+      W[27]=W[27] + 32'b00111010000111110100101100101110;
+     
+      W[28]=32'b00111010000111110100101100101110+W[21]+W[12];
+      W[28]=W[28] + 32'b00111010000111110100101100101110;
+     
+      W[29]=32'b00111010000111110100101100101110+W[22]+W[13];
+      W[29]=W[29] + 32'b00111010000111110100101100101110;
+     
+      W[30]=32'b00111010000111110100101100101110+W[23]+W[14];
+      W[30]=W[30] + 32'b00111010000111110100101100101110;
+     
+      W[31]=32'b00111010000111110100101100101110+W[24]+W[15];
+      W[31]=W[31] + 32'b00111010000111110100101100101110;
+     
+      W[32]=32'b00111010000111110100101100101110+W[25]+W[16];
+      W[32]=W[32] + 32'b00111010000111110100101100101110;
+     
+      W[33]=32'b00111010000111110100101100101110+W[26]+W[17];
+      W[33]=W[33] + 32'b00111010000111110100101100101110;
+     
+      W[34]=32'b00111010000111110100101100101110+W[27]+W[18];
+      W[34]=W[34] + 32'b00111010000111110100101100101110;
+
+      W[35]=32'b00111010000111110100101100101110+W[28]+W[19];
+      W[35]=W[35] + 32'b00111010000111110100101100101110;
+     
+      W[36]=32'b00111010000111110100101100101110+W[29]+W[20];
+      W[36]=W[36] + 32'b00111010000111110100101100101110;
+     
+      W[37]=32'b00111010000111110100101100101110+W[30]+W[21];
+      W[37]=W[37] + 32'b00111010000111110100101100101110;
+     
+      W[38]=32'b00111010000111110100101100101110+W[31]+W[22];
+      W[38]=W[38] + 32'b00111010000111110100101100101110;
+     
+      W[39]=32'b00111010000111110100101100101110+W[32]+W[23];
+      W[39]=W[39] + 32'b00111010000111110100101100101110;
+     
+      W[40]=32'b00111010000111110100101100101110+W[33]+W[24];
+      W[40]=W[40] + 32'b00111010000111110100101100101110;
+     
+      W[41]=32'b00111010000111110100101100101110+W[34]+W[25];
+      W[41]=W[41] + 32'b00111010000111110100101100101110;
+     
+      W[42]=32'b00111010000111110100101100101110+W[35]+W[26];
+      W[42]=W[42] + 32'b00111010000111110100101100101110;
+     
+      W[43]=32'b00111010000111110100101100101110+W[36]+W[27];
+      W[43]=W[43] + 32'b00111010000111110100101100101110;
+     
+      W[44]=32'b00111010000111110100101100101110+W[37]+W[28];
+      W[44]=W[44] + 32'b00111010000111110100101100101110;
+     
+      W[45]=32'b00111010000111110100101100101110+W[38]+W[29];
+      W[45]=W[45] + 32'b00111010000111110100101100101110;
+     
+      W[46]=32'b00111010000111110100101100101110+W[39]+W[30];
+      W[46]=W[46] + 32'b00111010000111110100101100101110;
+     
+      W[47]=32'b00111010000111110100101100101110+W[40]+W[31];
+      W[47]=W[47] + 32'b00111010000111110100101100101110;
+     
+      W[48]=32'b00111010000111110100101100101110+W[41]+W[32];
+      W[48]=W[48] + 32'b00111010000111110100101100101110;
+     
+      W[49]=32'b00111010000111110100101100101110+W[42]+W[33];
+      W[49]=W[49] + 32'b00111010000111110100101100101110;
+     
+      W[50]=32'b00111010000111110100101100101110+W[43]+W[34];
+      W[50]=W[50] + 32'b00111010000111110100101100101110;
+     
+      W[51]=32'b00111010000111110100101100101110+W[44]+W[35];
+      W[51]=W[51] + 32'b00111010000111110100101100101110;
+     
+      W[52]=32'b00111010000111110100101100101110+W[45]+W[36];
+      W[52]=W[52] + 32'b00111010000111110100101100101110;
+     
+      W[53]=32'b00111010000111110100101100101110+W[46]+W[37];
+      W[53]=W[53] + 32'b00111010000111110100101100101110;
+     
+      W[54]=32'b00111010000111110100101100101110+W[47]+W[38];
+      W[54]=W[54] + 32'b00111010000111110100101100101110;
+     
+      W[55]=32'b00111010000111110100101100101110+W[48]+W[39];
+      W[55]=W[55] + 32'b00111010000111110100101100101110;
+     
+      W[56]=32'b00111010000111110100101100101110+W[49]+W[40];
+      W[56]=W[56] + 32'b00111010000111110100101100101110;
+     
+      W[57]=32'b00111010000111110100101100101110+W[50]+W[41];
+      W[57]=W[57] + 32'b00111010000111110100101100101110;
+     
+      W[58]=32'b00111010000111110100101100101110+W[51]+W[42];
+      W[58]=W[58] + 32'b00111010000111110100101100101110;
+     
+      W[59]=32'b00111010000111110100101100101110+W[52]+W[43];
+      W[59]=W[59] + 32'b00111010000111110100101100101110;
+     
+      W[60]=32'b00111010000111110100101100101110+W[53]+W[44];
+      W[60]=W[60] + 32'b00111010000111110100101100101110;
+     
+      W[61]=32'b00111010000111110100101100101110+W[54]+W[45];
+      W[61]=W[61] + 32'b00111010000111110100101100101110;
+     
+      W[62]=32'b00111010000111110100101100101110+W[55]+W[46];
+      W[62]=W[62] + 32'b00111010000111110100101100101110;
+     
+      W[63]=32'b00111010000111110100101100101110+W[56]+W[47];
+      W[63]=W[63] + 32'b00111010000111110100101100101110;
+   
+     
+     
+     
+   end
+   
+endmodule
+
+module computation(in,A,B,C,D,E,F,G,H,H1,H2,H3,H4,H5,H6,H7,H8);
+
+wire [31:0] T1,T2;
+output [31:0] H1,H2,H3,H4,H5,H6,H7,H8;
+wire [31:0] a,b,c,d,e,f,g,h;
+wire [31:0] w1, w2, w3, w4;
+wire [63:0] Wi;
+output [31:0] A,B,C,D,E,F,G,H;
+wire [31:0] K0;
+input [79:0] in;
+ Ki k1(K0);
+ 
+   
+     
+assign H1 = in[31:0];      
+assign H2 = in [63:32];    
+assign H3 = H2;  
+assign H4 = H2 + H1;
+assign H5 = H4 + H2;    
+assign H6 = H3;    
+assign H7 = H2 + H8 + H2;    
+assign H8 = H4 + H6 + H1;
+assign a=H1;
+assign b=H2;
+assign c=H3;
+assign d=H4;
+assign e=H5;
+assign f=H6;
+assign g=H7;
+assign h=H8;
+assign w1 = (a & b) ^ (a & c) ^ (b & c);
+assign w2 = (e & f) ^ (e & g);
+E_1X e11x(w3,a);
+E_0X e01x(w4,b);
+assign T1 = h + w3 + w2 + K0;
+assign T2 = w4 + w1;
+assign H = g;
+assign G = f;
+assign F = e;
+assign E = d + T1;
+assign D = c;
+assign C = b;
+assign B = a;
+assign A = T1 + T2;
+
+endmodule
+
+module outputt(out,H1,H2,H3,H4,H5,H6,H7,H8,H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n);
+output [255:0] out;
+output [31:0] H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n;
+wire   [31:0] A,B,C,D,E,F,G,H;
+inout [31:0] H1,H2,H3,H4,H5,H6,H7,H8;
+wire [63:0] M,W;
+wire [79:0] in;
+computation i1(in,A,B,C,D,E,F,G,H,H1,H2,H3,H4,H5,H6,H7,H8);
+assign H1n = H1 + A;
+assign H2n = H2 + B;
+assign H3n = H3 + C;
+assign H4n = H4 + D;
+assign H5n = H5 + E;
+assign H6n = H6 + F;
+assign H7n = H7 + G;
+assign H8n = H8 + H;
+assign out = {H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n};
+endmodule
+
+
+module dff512(D,clk,Q);
+input [511:0] D; 
+input clk;  
+output reg [511:0] Q;
+always @(posedge clk) 
+begin
+    Q <= D;
+end 
+endmodule 
+
+module dff80256(D,clk,Q);
+input [79:0] D; 
+input clk;  
+output reg [255:0] Q;
+always @(posedge clk) 
+begin
+   Q <= D;
+end 
+endmodule 
+
+module dff64512(D,clk,Q);
+input [63:0] D; 
+input clk;  
+output reg [511:0] Q;
+always @(posedge clk) 
+begin
+   Q <= D;
+end 
+endmodule 
+
+module pipeline(in,out,clk);
+input [79:0] in;
+output [255:0] out;
+input clk;
+wire [31:0] K0,H1,H2,H3,H4,H5,H6,H7,H8,A,B,C,D,E,F,G,H,H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n;
+wire [63:0] M,W;
+wire [511:0] in1, in2;
+wire [511:0] M1;
+output [255:0] out1;
+
+assign out1 = {A,B,C,D,E,F,G,H};
+
+padding p1(in,in1);
+
+dff512 d1(in1,clk,in2);
+
+Compression c1(in2,M,W);
+
+dff64512 d2(M,clk,M1);
+
+computation comp1(in,A,B,C,D,E,F,G,H,H1,H2,H3,H4,H5,H6,H7,H8);
+
+dff80256 d3(in,clk,out1);
+
+outputt o1(out,H1,H2,H3,H4,H5,H6,H7,H8,H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n);
+
+dff80256 d4(in,clk,out1);
+
+endmodule
+
+module pipelinetb();
+reg [79:0] intb;
+wire [255:0] outtb;
+reg clktb;
+wire [31:0] K0tb,H1tb,H2tb,H3tb,H4tb,H5tb,H6tb,H7tb,H8tb,Atb,Btb,Ctb,Dtb,Etb,Ftb,Gtb,Htb,H1ntb,H2ntb,H3ntb,H4ntb,H5ntb,H6ntb,H7ntb,H8ntb;
+wire [63:0] Mtb,Wtb;
+wire [511:0] in1tb, in2tb;
+pipeline tb(intb,outtb,clktb);
+
+
+  
+initial
+    begin
+      clktb = 0;
+      repeat (25)
+        begin 
+          #50 clktb = 0; 
+           #50 clktb = 1;
+      $dumpfile("dump.vcd"); $dumpvars;
+    
+   
+          
+    #50 intb = 80'b01101100011000010110100101101000011000010111010001101101011101010111010000100011;
+   
+   
+    #10  $display("The 10 digit user input is = %h ",intb);
+   
+    #10 $display("The input hashed in sha-256 is = %h",outtb);
+
+        end
+    end
+endmodule
