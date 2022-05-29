@@ -1,0 +1,22 @@
+module outputttb();
+wire [255:0] outtb;
+  reg   [79:0] intb;
+  wire [31:0] H1tb,H2tb,H3tb,H4tb,H5tb,H6tb,H7tb,H8tb;
+ wire [31:0] H1ntb,H2ntb,H3ntb,H4ntb,H5ntb,H6ntb,H7ntb,H8ntb;
+ wire [31:0] ATB,BTB,CTB,DTB,ETB,FTB,GTB,HTB;
+outputt tb(outtb,H1tb,H2tb,H3tb,H4tb,H5tb,H6tb,H7tb,H8tb,H1ntb,H2ntb,H3ntb,H4ntb,H5ntb,H6ntb,H7ntb,H8ntb);
+
+initial 
+begin 
+
+intb = 80'b01101100011000010110100101101000011000010111010001101101011101010111010000100011;
+
+#10 
+$display(" output = %h ",outtb);
+
+end 
+endmodule 
+/* 
+output of this test: 
+The input hashed in sha-256 is = 6b46a4e2d6ddd597d2d0c2e84046370bfb105932a9ae987fe9f4cf8a2e481944
+*/
