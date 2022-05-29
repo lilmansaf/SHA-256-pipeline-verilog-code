@@ -1,0 +1,16 @@
+module paddingtb();
+reg [79:0] intb;
+wire [511:0] outtb;
+
+padding tb(intb,outtb);
+
+initial 
+begin 
+
+intb = 80'b01101100011000010110100101101000011000010111010001101101011101010111010000100011;
+
+#10 
+$display(" input after padding = %h ",outtb);
+
+end 
+endmodule 
