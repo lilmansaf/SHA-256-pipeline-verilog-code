@@ -477,35 +477,4 @@ dff80256 d4(in,clk,out1);
 
 endmodule
 
-module pipelinetb();
-reg [79:0] intb;
-wire [255:0] outtb;
-reg clktb;
-wire [31:0] K0tb,H1tb,H2tb,H3tb,H4tb,H5tb,H6tb,H7tb,H8tb,Atb,Btb,Ctb,Dtb,Etb,Ftb,Gtb,Htb,H1ntb,H2ntb,H3ntb,H4ntb,H5ntb,H6ntb,H7ntb,H8ntb;
-wire [63:0] Mtb,Wtb;
-wire [511:0] in1tb, in2tb;
-pipeline tb(intb,outtb,clktb);
 
-
-  
-initial
-    begin
-      clktb = 0;
-      repeat (25)
-        begin 
-          #50 clktb = 0; 
-           #50 clktb = 1;
-      $dumpfile("dump.vcd"); $dumpvars;
-    
-   
-          
-    #50 intb = 80'b01101100011000010110100101101000011000010111010001101101011101010111010000100011;
-   
-   
-    #10  $display("The 10 digit user input is = %h ",intb);
-   
-    #10 $display("The input hashed in sha-256 is = %h",outtb);
-
-        end
-    end
-endmodule
