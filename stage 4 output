@@ -1,0 +1,18 @@
+module outputt(out,H1,H2,H3,H4,H5,H6,H7,H8,H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n);
+output [255:0] out;
+output [31:0] H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n;
+wire   [31:0] A,B,C,D,E,F,G,H;
+inout [31:0] H1,H2,H3,H4,H5,H6,H7,H8;
+wire [63:0] M,W;
+wire [79:0] in;
+computation i1(in,A,B,C,D,E,F,G,H,H1,H2,H3,H4,H5,H6,H7,H8);
+assign H1n = H1 + A;
+assign H2n = H2 + B;
+assign H3n = H3 + C;
+assign H4n = H4 + D;
+assign H5n = H5 + E;
+assign H6n = H6 + F;
+assign H7n = H7 + G;
+assign H8n = H8 + H;
+assign out = {H1n,H2n,H3n,H4n,H5n,H6n,H7n,H8n};
+endmodule
