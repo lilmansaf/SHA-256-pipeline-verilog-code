@@ -1,0 +1,8 @@
+module padding(in,out);
+  input [79:0]in; // 80 bits for 10 char. input
+  output reg [511:0]out;
+always@(*)
+    begin
+     out = {in, {512-80{1'b0}} };
+    end
+endmodule
